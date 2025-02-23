@@ -1,0 +1,2 @@
+ALTER TABLE articles
+ 2 ADD COLUMN is_accepted BOOLEAN DEFAULT NULL;

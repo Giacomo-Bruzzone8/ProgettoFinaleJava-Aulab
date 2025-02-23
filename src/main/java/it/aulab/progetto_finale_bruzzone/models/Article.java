@@ -11,6 +11,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -48,6 +49,10 @@ private String body;
 @NotNull
 private LocalDate publishDate;
 
+@Column(nullable = true)
+private Boolean isAccepted;
+
+
 @ManyToOne
 @JoinColumn(name = "user_id")
 @JsonIgnoreProperties({"articles"})
@@ -56,4 +61,8 @@ private User user;
 @ManyToOne
 @JsonIgnoreProperties({"articles"})
 private Category category;
+
+@OneToOne
+@JsonIgnoreProperties({"article"})
+private Image image;
 }

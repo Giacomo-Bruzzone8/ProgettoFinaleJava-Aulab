@@ -32,7 +32,25 @@
                         <a class="nav-link" href="/articles/create">Crea Articolo</a>
                     </li>
                     <li class="nav-item">
-                        <a href="" class="nav-link">Link</a>
+                        <a href="/articles" class="nav-link">Tutti gli Articoli</a>
+                    </li>
+                    <li class="nav-item" sec:authorize="hasRole('ROLE_ADMIN')">
+                        <div class="d-flex">
+                            <a href="/admin/dashboard" class="nav-link">Dashboard Admin"></a>
+                            <div class="mt-1" th:if="${careerRequests > 0}">
+                                <i class="fas fa-bell fa-1 pt-2"></i>
+                                <span class="badge rounded-pill bg-danger text-white px-1" th:text="${careerRequests}"> </span>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="nav-item" sec:authorize="hasRole('ROLE_REVISOR')">
+                        <div class="d-flex">
+                            <a class="nav-link" href="/revisor/dashboard">Dashboard Revisore</a>
+                            <div class="mt-1" th:if="${articlestoBeRevised > 0}">
+                                <i class="fas fa-bell fa-1 pt-2"></i>
+                                <span class="badge rounded-pill bg-danger text-white px-1" th:text="${articlestoBeRevised}"></span>
+                            </div>
+                        </div>
                     </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
@@ -70,7 +88,7 @@
                 <!-- Contact info  -->
                 <div class="col-md-4 mb-3 text-end">
                     <h5>Lavora con Noi</h5>
-                    <a href="#" class="btn btn-primary">Richiedi</a>
+                    <a th:href="@{/operations/career/request}" class="btn btn-primary">Richiedi</a>
                 </div>
             </div>
         </div>
