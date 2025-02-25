@@ -65,4 +65,19 @@ private Category category;
 @OneToOne
 @JsonIgnoreProperties({"article"})
 private Image image;
+
+@Override
+public boolean equals(Object obj){
+    Article article = (Article) obj;
+
+    if(title.equals(article.getTitle()) &&
+        subtitle.equals(article.getSubtitle()) &&
+        body.equals(article.getBody()) &&
+        publishDate.equals(article.getPublishDate()) &&
+        category.getName().equals(article.getCategory().getName()) &&
+        image.getPath().equals(article.getImage().getPath())){
+            return true;
+    }
+    return false;
+}
 }
