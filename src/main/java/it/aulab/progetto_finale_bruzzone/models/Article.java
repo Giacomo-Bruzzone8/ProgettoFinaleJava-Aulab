@@ -62,7 +62,7 @@ private User user;
 @JsonIgnoreProperties({"articles"})
 private Category category;
 
-@OneToOne
+@OneToOne(mappedBy = "article")
 @JsonIgnoreProperties({"article"})
 private Image image;
 
