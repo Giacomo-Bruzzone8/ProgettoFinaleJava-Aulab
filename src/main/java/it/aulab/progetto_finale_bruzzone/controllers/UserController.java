@@ -83,7 +83,7 @@ public class UserController {
     }
 
     // Rotta per il salvataggio della registrazione
-    @SuppressWarnings("null")
+    
     @PostMapping("/register/save")
     public String registration(@Valid @ModelAttribute("user") UserDto userDto, BindingResult result,
                                Model model, RedirectAttributes redirectAttributes,
@@ -132,7 +132,7 @@ public class UserController {
     @GetMapping("/revisor/dashboard")
     public String revisorDashboard(Model viewModel) {
         viewModel.addAttribute("title", "Articoli da revisionare");
-        viewModel.addAttribute("articles", articleRepository.findByIsAcceptedIsNull());
+        viewModel.addAttribute("articles", articleRepository.findByIsAcceptedNull());
         
         return "revisor/dashboard";
     }

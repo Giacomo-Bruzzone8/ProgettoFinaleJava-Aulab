@@ -20,14 +20,14 @@ public class NotificationInterceptor implements HandlerInterceptor {
     ArticleRepository articleRepository;
 
     @Override
-    public void postHandle(@SuppressWarnings("null") HttpServletRequest request, @SuppressWarnings("null") HttpServletResponse response, @SuppressWarnings("null") Object handler, @SuppressWarnings("null") ModelAndView modelAndView) throws Exception {
+    public void postHandle( HttpServletRequest request,  HttpServletResponse response,  Object handler, ModelAndView modelAndView) throws Exception {
         if (modelAndView != null && request.isUserInRole("ROLE_ADMIN")) {
             int careerCount = careerRequestRepository.findByIsCheckedFalse().size();
             modelAndView.addObject("careerRequests", careerCount);
         }
 
         if (modelAndView != null && request.isUserInRole("ROLE_REVISOR")) {
-            int revisedCount = articleRepository.findByIsAcceptedIsNull().size();
+            int revisedCount = articleRepository.findByIsAcceptedNull().size();
             modelAndView.addObject("articlesToBeRevised", revisedCount);
         }
     }
