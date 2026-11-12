@@ -1,83 +1,65 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" 
->
-<head th:insert="~{index :: head}"></head>
+<html lang="it" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{index :: head}"></head>
+
 <body>
-    <head th:insert="~{index :: navbar}"></head>
+    <header th:replace="~{index :: navbar}"></header>
 
-    <div class="container-fluid p-5 bg-secondary-subtle text-center">
-        <div class="row justify-content-center">
-            <div class="col-12">
-                <span class="h1">Articolo</span>
-                <h2 th:text="${article.title}">Titolo</h2>
+    <main>
+        <div class="container">
+            <div class="flash mt-4" role="note">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <span>Bozza in revisione: leggila e decidi se pubblicarla.</span>
             </div>
         </div>
-    </div>
 
-    <div class="container my-5">
-        <div class="row justify-content-center">
-            <div class="col-12 col-md-8 d-flex flex-column">
-                <div id="carouselExample" class="carousel slide">
-                    <div class="carousel-inner">
-                        <div class="carousel-item active">
-                            <img th:if="${article.image != null}" th:src="${article.image.path}" class="card-img-top" alt="...">
-                            <img th:unless="${article.image != null}" th:src="@{/images/default.png}" class="card-img-top" alt="...">
-                        </div>
-                    </div>
-                    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
-                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                        <span class="visually-hidden">Previous</span>
-                    </button>
-                    <button class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next">
-                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                        <span class="visually-hidden">Next</span>
-                    </button>
-                </div>
-
-                <div class="text center">
-                    <h2 th:text="${article.subtitle}">Sottotitolo</h2>
-
-                    <p class="fs-5" th:if="${article.category != null}">Categoria:
-                        <a th:href="@{/categories/search/{id}(id=${article.category.id})}" class="text-capitalize fw-bold text-muted" th:text="${article.category.name}">categoria"></a>
-                    </p>
-
-                    <p class="fs-5" th:if="${article.category == null}">Nessuna Categoria</p>
-
-                    <div class="text-muted my-3">
-                        <p>Redatto Il <p  th:text="${article.publishDate}">data</p> da
-                          <a class="text-muted" th:href="@{/search/{id}(id=${article.user.id})}">
-                              <p th:text="${article.user.username}">User</p>
-                          </a>
-                        </p>
+        <article class="container">
+            <header class="article-head">
+                <div class="kicker" th:text="${article.category != null ? article.category.name : 'Senza categoria'}">Categoria</div>
+                <h1 th:text="${article.title}">Titolo</h1>
+                <p class="standfirst" th:text="${article.subtitle}">Sottotitolo</p>
+                <div class="byline">
+                    <span class="avatar" th:text="${@ui.initials(article.user.username)}">AB</span>
+                    <div class="meta">
+                        di <span th:text="${article.user.username}">Autore</span><br>
+                        <span th:text="${@ui.date(article.publishDate)}">data</span><span class="sep">·</span><span
+                            th:text="${@ui.readingMinutes(article.body) + ' min di lettura'}">3 min</span>
                     </div>
                 </div>
+            </header>
+
+            <figure class="article-figure">
+                <div class="figure-frame wide">
+                    <img th:src="${@ui.cover(article)}" th:attr="data-fallback=${@ui.generatedCover(article)}"
+                        th:alt="${article.title}">
+                </div>
+            </figure>
+
+            <div class="article-body">
+                <p th:each="paragraph : ${@ui.paragraphs(article.body)}" th:text="${paragraph}">Testo</p>
             </div>
-            <hr>
-            <p th:text="${article.body}"></p>
 
-            <div class="text-center">
-                <a href="#" class="text-secondary pointer" onclick="goBack()">Torna Indietro"</a>
+            <div class="article-end">
+                <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+                    <a th:href="@{/revisor/dashboard}" class="btn btn-outline-ink">
+                        <i class="fa-solid fa-arrow-left"></i> Torna alla lista
+                    </a>
+                    <div class="d-flex gap-2">
+                        <form th:action="@{/articles/accept(action='reject', articleId=${article.id})}" method="post">
+                            <button type="submit" class="btn btn-accent"><i class="fa-solid fa-xmark"></i> Rifiuta</button>
+                        </form>
+                        <form th:action="@{/articles/accept(action='accept', articleId=${article.id})}" method="post">
+                            <button type="submit" class="btn btn-success-ink"><i class="fa-solid fa-check"></i> Pubblica</button>
+                        </form>
+                    </div>
+                </div>
             </div>
+        </article>
+    </main>
 
-            <div class="d-flex justify-content-between">
-                <form th:action="@{/articles/accept(action='accept' , articleId=${article.id})}" method="post">
-                    <button type="submit" class="btn btn-success m-2">Accetta</button>
-                </form>
-
-                <form th:action="@{/articles/accept(action='reject' , articleId=${article.id})}" method="post" th:object="${article}">
-                    <button type="submit" class="btn btn-danger m-2">Rifiuta</button>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <head th:insert="~{index :: footer}"></head>
+    <footer th:replace="~{index :: footer}"></footer>
     <script th:replace="~{index :: bootstrapScript}"></script>
-    <script>
-        function goBack() {
-            window.history.back();
-        }
-    </script>
-    
 </body>
+
 </html>

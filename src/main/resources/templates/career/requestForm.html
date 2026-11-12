@@ -1,46 +1,46 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-    <head th:insert="~{index :: head}"></head>
+<html lang="it" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{index :: head}"></head>
 
 <body>
-    <head th:insert="~{index :: navbar}"></head>
+    <header th:replace="~{index :: navbar}"></header>
 
-
-    <div class="vh-100">
+    <main>
         <div class="container">
-            <div class="row">
+            <div class="page-head">
+                <div class="kicker">Lavora con noi</div>
+                <h1>Candidati in redazione</h1>
+                <p>Dicci che ruolo vorresti e perché. L'amministrazione ti risponderà via email.</p>
+            </div>
 
-                <div class="col-12 my-5 d-flex justify-content-between align-items center">
-                    <div class="d-flex justify-content-center align-items-center flex-grow-1">
-                        <h1 th:text="${title}">Richiesta Collaborazione</h1>
+            <div class="row justify-content-center">
+                <div class="col-12 col-lg-8">
+                    <div class="paper-card">
+                        <form th:action="@{/operations/career/request/save}" method="post" th:object="${careerRequest}">
+                            <div class="mb-4">
+                                <label for="role" class="form-label">Ruolo</label>
+                                <select id="role" th:field="*{role}" class="form-select">
+                                    <option th:each="role : ${roles}" th:value="${role.id}" th:text="${@ui.roleLabel(role.name)}"></option>
+                                </select>
+                            </div>
+                            <div class="mb-4">
+                                <label for="body" class="form-label">Lettera di presentazione</label>
+                                <textarea id="body" class="form-control" th:field="*{body}" required
+                                    placeholder="Racconta chi sei, cosa ti piacerebbe fare e perché."></textarea>
+                            </div>
+                            <div class="d-flex justify-content-end">
+                                <button type="submit" class="btn btn-ink"><i class="fa-solid fa-paper-plane"></i> Invia candidatura</button>
+                            </div>
+                        </form>
                     </div>
-                </div>
-
-                <div class="col-12 my-5">
-                    <form th:action="@{/operations/career/request/save}" method="POST" th:object="${careerRequest}" enctype="multipart/form-data">
-                        <div class="mb-3">
-                            <label for="body" class="form-label">Motivo della richiesta:</label>
-                            <textarea id="body" class="form-control" th:field="*{body}" placeholder="Inserire Motivazione"></textarea>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="role" class="form-label">Ruolo?</label>
-                            <select id="role" th:field="*{role}" class="form-select">
-                                <option th:each="role:${roles}" th:value="${role.id}" th:text="${#strings.substring(role.name, 5)}"></option>
-                            </select>
-                        </div>
-
-                        <button type="submit" class="btn btn-success">Invia</button>
-
-
-                    </form>
                 </div>
             </div>
         </div>
-    </div>
+    </main>
 
-
-    <head th:insert="~{index :: footer}"></head>
+    <footer th:replace="~{index :: footer}"></footer>
     <script th:replace="~{index :: bootstrapScript}"></script>
 </body>
+
 </html>

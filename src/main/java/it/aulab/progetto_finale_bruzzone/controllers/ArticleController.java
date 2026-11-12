@@ -84,7 +84,7 @@ public class ArticleController {
             viewModel.addAttribute("title", "Crea un articolo");
             viewModel.addAttribute("article", article);
             viewModel.addAttribute("categories", categoryService.readAll());
-            return "articles/create";
+            return "article/create";
         }
         articleService.create(article, principal, file);
         redirectAttributes.addFlashAttribute("successMessage", "Articolo creato con successo");
@@ -94,8 +94,9 @@ public class ArticleController {
     // Rotta di dettaglio di un articolo 
     @GetMapping("detail/{id}")
     public String detailArticle(@PathVariable("id") Long id, Model viewModel) {
-        viewModel.addAttribute("title", "Dettaglio articolo");
-        viewModel.addAttribute("article", articleService.read(id));
+        ArticleDto article = articleService.read(id);
+        viewModel.addAttribute("title", article.getTitle());
+        viewModel.addAttribute("article", article);
         return "article/detail";
     }
 
@@ -170,7 +171,7 @@ public String articleDelete(@PathVariable("id") Long id, RedirectAttributes redi
     // Rotta di ricerca di un articolo 
     @GetMapping("/search")
     public String articleSearch(@Param("keyword") String keyword, Model viewModel) {
-        viewModel.addAttribute("title", "Tutti gli Articoli trovati");
+        viewModel.addAttribute("title", "Risultati della ricerca");
 
         List<ArticleDto> articles = articleService.search(keyword);
 

@@ -63,9 +63,13 @@ public class UserController {
         // Ordino e invio al template gli articoli ordinati in modo decrescente
         Collections.sort(articles, Comparator.comparing(ArticleDto::getPublishDate).reversed());
 
-        List<ArticleDto> lastThreeArticles = articles.stream().limit(3).collect(Collectors.toList());
-
-        viewModel.addAttribute("articles", lastThreeArticles);
+        // Prima pagina: un articolo d'apertura, tre "spalle" e la griglia delle ultime notizie
+        viewModel.addAttribute("title", "Prima pagina");
+        viewModel.addAttribute("articles", articles);
+        viewModel.addAttribute("featured", articles.isEmpty() ? null : articles.get(0));
+        viewModel.addAttribute("secondary", articles.stream().skip(1).limit(3).collect(Collectors.toList()));
+        viewModel.addAttribute("latest", articles.stream().skip(4).limit(6).collect(Collectors.toList()));
+        viewModel.addAttribute("more", articles.stream().skip(10).limit(5).collect(Collectors.toList()));
         return "home";
     }
 
@@ -100,7 +104,7 @@ public class UserController {
         }
 
         userService.saveUser(userDto, redirectAttributes, request, response);
-        redirectAttributes.addFlashAttribute("SuccessMessage", "User has been registered successfully");
+        redirectAttributes.addFlashAttribute("successMessage", "Registrazione completata: benvenuto nella redazione!");
         return "redirect:/";
     }
 
@@ -108,7 +112,7 @@ public class UserController {
     @GetMapping("/search/{id}")
     public String userArticleSearch(@PathVariable("id") Long id, Model viewModel) {
         User user = userService.find(id);
-        viewModel.addAttribute("title", "Tutti gli articoli dell'utente: " + user.getUsername());
+        viewModel.addAttribute("title", "Articoli di " + user.getUsername());
 
         List<ArticleDto> articles = articleService.searchByAuthor(user);
 
@@ -140,7 +144,7 @@ public class UserController {
     // Rotta per la dashboard del writer 
     @GetMapping("/writer/dashboard")
     public String writerDashboard(Model viewModel , Principal principal) {
-        viewModel.addAttribute("title", "Articoli da revisionare");
+        viewModel.addAttribute("title", "I miei articoli");
         
         List<ArticleDto> userArticles = articleService.readAll()
                                                       .stream()

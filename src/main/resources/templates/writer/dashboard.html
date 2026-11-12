@@ -1,65 +1,84 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head th:insert="~{index :: head}"></head>
-<body>
-    <head th:insert="~{index :: navbar}"></head>
+<html lang="it" xmlns:th="http://www.thymeleaf.org">
 
-    <div class="min-vh-100">
-        <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}">
-            <p th:text="${successMessage}"></p>
-        </div>
+<head th:replace="~{index :: head}"></head>
+
+<body>
+    <header th:replace="~{index :: navbar}"></header>
+
+    <main>
+        <div th:replace="~{index :: flash}"></div>
 
         <div class="container">
-            <div class="row">
-                <div class="col-12 my-5 d-flex justify-content-center align-items-center">
-                    <span class="h1">Dashboard Scrittore</span>
+            <div class="page-head">
+                <div class="kicker">Scrivania del redattore</div>
+                <h1>I miei articoli</h1>
+                <p>Tutto quello che hai scritto, con lo stato della revisione.</p>
+            </div>
+
+            <div class="row g-4 mb-5">
+                <div class="col-6 col-md-3">
+                    <div class="stat"><div class="num" th:text="${articles.size()}">0</div><div class="lbl">Totali</div></div>
                 </div>
-
-                <div class="col-12 my-5 d-flex justify-content-center align-items-center">
-                    <span class="h1" th:text="title">Articoli da pubblicare</span>
+                <div class="col-6 col-md-3">
+                    <div class="stat"><div class="num" th:text="${#lists.size(articles.?[isAccepted == true])}">0</div><div class="lbl">Pubblicati</div></div>
                 </div>
-
-                <div class="col-12">
-                    <table class="table table-striped table-responsive-lg">
-                        <thead>
-                            <tr>
-                                <th>Id</th>
-                                <th>Title</th>
-                                <th>Subtitle</th>
-                                <th>Category</th>
-                                <th>#Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr th:each="article:${articles}">
-                                <td th:text="${article.id}"></td>
-                                <td th:text="${article.title}"></td>
-                                <td th:text="${article.subtitle}"></td>
-                                <td th:if="${article.category}" th:text="${article.category.name}"></td>
-                                <td th:unless="${article.category}">Nessuna Categoria</td>
-                                <td>
-                                    <a th:href="@{/articles/detail/{id}(id=${article.id})}" class="btn btn-primary m-2">
-                                        <i class="fa-solid fa-bars"></i>
-                                    </a>
-
-                                    <a th:href="@{/articles/edit/{id}(id=${article.id})}" class="btn btn-warning m-2">
-                                        <i class="fa-solid fa-pen"></i>
-                                    </a>
-
-                                    <a th:href="@{/articles/delete/{id}(id=${article.id})}" class="btn btn-danger m-2">
-                                        <i class="fa-solid fa-trash"></i>
-                                    </a>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                <div class="col-6 col-md-3">
+                    <div class="stat"><div class="num" th:text="${#lists.size(articles.?[isAccepted == null])}">0</div><div class="lbl">In revisione</div></div>
+                </div>
+                <div class="col-6 col-md-3 d-flex align-items-end justify-content-md-end">
+                    <a th:href="@{/articles/create}" class="btn btn-ink"><i class="fa-solid fa-pen-nib"></i> Nuovo articolo</a>
                 </div>
             </div>
-        </div>
-    </div>
-    
 
-    <head th:insert="~{index :: footer}"></head>
+            <div class="table-responsive" th:if="${!articles.isEmpty()}">
+                <table class="ledger">
+                    <thead>
+                        <tr>
+                            <th>Titolo</th>
+                            <th class="d-none d-md-table-cell">Sezione</th>
+                            <th class="d-none d-md-table-cell">Data</th>
+                            <th>Stato</th>
+                            <th class="text-end">Azioni</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="article : ${articles}">
+                            <td class="title-cell">
+                                <span th:text="${article.title}">Titolo</span>
+                                <div class="meta fw-normal" th:text="${article.subtitle}">Sottotitolo</div>
+                            </td>
+                            <td class="d-none d-md-table-cell" th:text="${article.category != null ? article.category.name : '—'}">Sezione</td>
+                            <td class="d-none d-md-table-cell" th:text="${@ui.date(article.publishDate)}">Data</td>
+                            <td>
+                                <span class="status ok" th:if="${article.isAccepted == true}">Pubblicato</span>
+                                <span class="status ko" th:if="${article.isAccepted == false}">Rifiutato</span>
+                                <span class="status wait" th:if="${article.isAccepted == null}">In revisione</span>
+                            </td>
+                            <td class="actions">
+                                <a th:href="@{/articles/detail/{id}(id=${article.id})}" class="btn btn-outline-ink btn-icon" title="Leggi" aria-label="Leggi">
+                                    <i class="fa-regular fa-eye"></i></a>
+                                <a th:href="@{/articles/edit/{id}(id=${article.id})}" class="btn btn-outline-ink btn-icon" title="Modifica" aria-label="Modifica">
+                                    <i class="fa-solid fa-pen"></i></a>
+                                <a th:href="@{/articles/delete/{id}(id=${article.id})}" class="btn btn-accent btn-icon" title="Elimina" aria-label="Elimina"
+                                    onclick="return confirm('Eliminare definitivamente questo articolo?');">
+                                    <i class="fa-solid fa-trash"></i></a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="empty-state" th:if="${articles.isEmpty()}">
+                <h2>Non hai ancora scritto nulla</h2>
+                <p class="mb-4">Il tuo primo articolo è a un clic di distanza.</p>
+                <a th:href="@{/articles/create}" class="btn btn-ink">Scrivi il primo articolo</a>
+            </div>
+        </div>
+    </main>
+
+    <footer th:replace="~{index :: footer}"></footer>
     <script th:replace="~{index :: bootstrapScript}"></script>
 </body>
+
 </html>

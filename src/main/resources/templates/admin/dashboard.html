@@ -1,88 +1,75 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="it" xmlns:th="http://www.thymeleaf.org">
 
-<head th:insert="~{index :: head}"></head>
+<head th:replace="~{index :: head}"></head>
 
 <body>
+    <header th:replace="~{index :: navbar}"></header>
 
-    <head th:insert="~{index :: navbar}"></head>
+    <main>
+        <div th:replace="~{index :: flash}"></div>
 
-    <div th:if="${successMessage}" class="alert alert-success">
-        <p th:text="${successMessage}"></p>
-    </div>
-
-
-    <div class="container min-vh-100">
-        <div class="row">
-            <div class="col-12 my-5 d-flex justify-content-center align-items-center">
-                <span class="h1">Dashboard Admin"></span>
+        <div class="container">
+            <div class="page-head">
+                <div class="kicker">Amministrazione</div>
+                <h1>La direzione</h1>
+                <p>Candidature in arrivo e sezioni del giornale.</p>
             </div>
 
-            <div class="col-12 my-5 d-flex justify-content-center align-items-center">
-                <span class="h1" th:text="title">Richieste Ricevute</span>
-            </div>
+            <div class="row g-5">
+                <section class="col-12 col-lg-7">
+                    <h2 class="section-title mt-0">Candidature da valutare</h2>
+                    <div class="table-responsive" th:if="${!requests.isEmpty()}">
+                        <table class="ledger">
+                            <thead>
+                                <tr>
+                                    <th>Candidato</th>
+                                    <th>Ruolo richiesto</th>
+                                    <th class="text-end">Azioni</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="request : ${requests}">
+                                    <td class="title-cell" th:text="${request.user.username}">Utente</td>
+                                    <td><span class="status wait" th:text="${@ui.roleLabel(request.role.name)}">Ruolo</span></td>
+                                    <td class="actions">
+                                        <a th:href="@{/operations/career/request/detail/{id}(id=${request.id})}"
+                                            class="btn btn-ink">Valuta</a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="empty-state py-5" th:if="${requests.isEmpty()}">
+                        <h2>Nessuna candidatura</h2>
+                        <p class="mb-0">Quando qualcuno si candida, la trovi qui.</p>
+                    </div>
+                </section>
 
-            <div class="col-12">
-                <table class="table table-striped table-responsive-lg">
-                    <thead>
-                        <tr>
-                            <th>Id</th>
-                            <th>Utente</th>
-                            <th>Per il Ruolo</th>
-                            <th>#Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr th:each="request:${requests}">
-                            <td th:text="${request.id}"></td>
-                            <td th:text="${request.user.username}"></td>
-                            <td th:text="${request.role.name}"></td>
-                            <td>
-                                <a th:href="@{/operations/career/request/detail/{id}(id=${request.id})}"
-                                    class="btn btn-primary m-2">
-                                    <i class="fa-solid fa-bars"></i>
-                                </a>
-
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <div class="col12 my-5 d-flex justify-content-center align-items-center">
-                <span class="h1">Tutte Le Categorie</span>
-                <a th:href="@{/categories/create}" class="btn btn-primary m-2">
-                    <i class="fa-solid fa-plus"></i>
-                </a>
-            </div>
-
-            <div class="col-12">
-                <table class="table table-striped table-responsive-lg">
-                    <thead>
-                        <tr>
-                            <th>Id</th>
-                            <th>Nome</th>
-                            <th class="text-end">#Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr th:each="category:${categories}">
-                            <td th:text="${category.id}"></td>
-                            <td th:text="${category.name}"></td>
-                            <td class="text-end">
-                               <a th:href="@{/categories/edit/{id}(id=${category.id})}" class="btn btn-warning m-2">
-                                <i class="fa-solid fa-pencil"></i>
-                                </a>
-                                <a th:href="@{/categories/delete/{id}(id=${category.id})}" class="btn btn-danger m-2"><i class="fa-solid fa-trash"></i></a>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                <section class="col-12 col-lg-5">
+                    <h2 class="section-title mt-0">Sezioni</h2>
+                    <table class="ledger">
+                        <tbody>
+                            <tr th:each="category : ${categories}">
+                                <td class="title-cell text-capitalize" th:text="${category.name}">Categoria</td>
+                                <td class="actions">
+                                    <a th:href="@{/categories/edit/{id}(id=${category.id})}" class="btn btn-outline-ink btn-icon"
+                                        title="Modifica" aria-label="Modifica"><i class="fa-solid fa-pen"></i></a>
+                                    <a th:href="@{/categories/delete/{id}(id=${category.id})}" class="btn btn-accent btn-icon"
+                                        title="Elimina" aria-label="Elimina"
+                                        onclick="return confirm('Eliminare la sezione? Gli articoli resteranno senza categoria.');">
+                                        <i class="fa-solid fa-trash"></i></a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <a th:href="@{/categories/create}" class="btn btn-ink mt-3"><i class="fa-solid fa-plus"></i> Nuova sezione</a>
+                </section>
             </div>
         </div>
-    </div>
+    </main>
 
-    <head th:insert="~{index :: footer}"></head>
+    <footer th:replace="~{index :: footer}"></footer>
     <script th:replace="~{index :: bootstrapScript}"></script>
 </body>
 

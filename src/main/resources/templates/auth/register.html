@@ -1,68 +1,63 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="it" xmlns:th="http://www.thymeleaf.org">
 
-<head th:insert="~{index :: head}"></head>
+<head th:replace="~{index :: head}"></head>
 
 <body>
+    <header th:replace="~{index :: navbar}"></header>
 
-    <head th:insert="~{index :: navbar}"></head>
-
-    <div class="vh-100">
-        <br /><br /><br />
+    <main>
         <div class="container">
-            <div class="row col-md-8 offset-md-2">
-                <div class="card">
-                    <div class="card-header">
-                        <h2 class="text-center">Registration</h2>
+            <div class="row justify-content-center">
+                <div class="col-12 col-md-10 col-lg-7">
+                    <div class="page-head border-0 mb-0">
+                        <div class="kicker">Abbonati, è gratis</div>
+                        <h1>Crea il tuo account</h1>
+                        <p>Registrati per candidarti come redattore o revisore.</p>
                     </div>
-                    <div th:if="${param.success}">
-                        <div class="alert alert-info">
-                            you havve successfully registered our app!
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <form th:action="@{/register/save}" th:object="${user}" role="form" method="post">
-                            <div class="form-group mb-3">
-                                <label class="form-label">First Name</label>
-                                <input class="form-control" id="firstName" name="firstName"
-                                    placeholder="Enter first name" th:field="*{firstName}" type="text">
-                                <p th:errors="*{firstName}" class="text-danger"
-                                    th:if="${#fields.hasErrors('firstName')}"></p>
+
+                    <div class="paper-card mt-3">
+                        <form th:action="@{/register/save}" th:object="${user}" method="post" novalidate>
+                            <div class="row g-3">
+                                <div class="col-12 col-sm-6">
+                                    <label class="form-label" for="firstName">Nome</label>
+                                    <input class="form-control" id="firstName" th:field="*{firstName}" type="text"
+                                        autocomplete="given-name">
+                                    <p th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}" class="field-error"></p>
+                                </div>
+                                <div class="col-12 col-sm-6">
+                                    <label class="form-label" for="lastName">Cognome</label>
+                                    <input class="form-control" id="lastName" th:field="*{lastName}" type="text"
+                                        autocomplete="family-name">
+                                    <p th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}" class="field-error"></p>
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label" for="email">Email</label>
+                                    <input class="form-control" id="email" th:field="*{email}" type="email"
+                                        placeholder="nome@esempio.it" autocomplete="email">
+                                    <p th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="field-error"></p>
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label" for="password">Password</label>
+                                    <input class="form-control" id="password" th:field="*{password}" type="password"
+                                        autocomplete="new-password">
+                                    <p th:if="${#fields.hasErrors('password')}" th:errors="*{password}" class="field-error"></p>
+                                </div>
                             </div>
-                            <div class="form-group mb-3">
-                                <label class="form-label">Last Name</label>
-                                <input class="form-control" id="lastName" name="lastName" placeholder="Enter last name"
-                                    th:field="*{lastName}" type="text">
-                                <p th:errors="*{lastName}" class="text-danger" th:if="${#fields.hasErrors('lastName')}">
-                                </p>
-                            </div>
-                            <div class="form-group mb-3">
-                                <label class="form-label">Email</label>
-                                <input class="form-control" id="email" name="email" placeholder="Enter email"
-                                    th:field="*{email}" type="email">
-                                <p th:errors="*{email}" class="text-danger" th:if="${#fields.hasErrors('email')}"></p>
-                            </div>
-                            <div class="form-group mb-3">
-                                <label class="form-label">Password</label>
-                                <input class="form-control" id="password" name="password" placeholder="Enter password"
-                                    th:field="*{password}" type="password">
-                                <p th:errors="*{password}" class="text-danger" th:if="${#fields.hasErrors('password')}">
-                                </p>
-                            </div>
-                            <div class="form-group">
-                                <button type="submit" class="btn btn-primary">Register</button>
-                                <span>Arledy registered? <a th:href="@{/login}">Login here</a></span>
-                            </div>
+                            <button type="submit" class="btn btn-ink w-100 mt-4">Registrati</button>
                         </form>
                     </div>
+
+                    <p class="meta text-center mt-4">Hai già un account?
+                        <a th:href="@{/login}">Accedi</a>
+                    </p>
                 </div>
             </div>
         </div>
-    </div>
+    </main>
 
-    <head th:insert="~{index :: footer}"></head>
+    <footer th:replace="~{index :: footer}"></footer>
     <script th:replace="~{index :: bootstrapScript}"></script>
-
 </body>
 
 </html>

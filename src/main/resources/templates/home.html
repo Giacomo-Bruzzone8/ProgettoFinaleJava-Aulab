@@ -1,59 +1,109 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
-    
+<html lang="it" xmlns:th="http://www.thymeleaf.org">
 
-<head th:insert="~{index :: head}"></head>
+<head th:replace="~{index :: head}"></head>
 
 <body>
+    <header th:replace="~{index :: navbar}"></header>
 
-    <head th:insert="~{index :: navbar}"></head>
+    <main>
+        <div th:replace="~{index :: flash}"></div>
 
-    <!-- flash message  -->
-    <div th:if="${param.notAuthorized}">
-        <div class="alert alert-danger">You are not authorized to access this page</div>
-    </div>
+        <div class="container">
 
-    <div th:if="${successMessage}" class="alert alert-success">
-        <p th:text="${successMessage}"></p>
-    </div>
-
-    <div th:if="${errorMessage}" class="alert alert-success">
-        <p th:text="${errorMessage}"></p>
-    </div>
-
-    <div class="container-fluid">
-        <div class="row ms-5 vh-100 align-items-center">
-            <div class="col-10">
-                <h1 class="mb-5">Welcome to <span class="display-4 fw-bold d-block">New Aulab Chronicle</span></h1>
+            <!-- Nessun articolo pubblicato -->
+            <div class="empty-state my-5" th:if="${featured == null}">
+                <h2>La prima pagina è ancora bianca</h2>
+                <p>Non ci sono ancora articoli approvati. Torna presto, la redazione è al lavoro.</p>
             </div>
-        </div>
-    </div>
 
-    <div class="container" th:if="${articles.size() > 0}">
-        <div class="row justify-content-center">
-            <div class="col-10 mb-5">
-                <h1 class="text-center">Gli Ultimi Articoli</h1>
-            </div>
-        </div>
-        <div class="row justify-content-center mb-5">
-            <div th:each="article:${articles}" class="col-12 col-md-4 d-flex justify-content-center">
-                <div class="card mb-3" style="width: 18rem;">
-                    <img th:if="${article.image != null}" th:src="${article.image.path}" class="card-img-top" alt="...">
-                    <img th:unless="${article.image != null}" th:src="@{/images/default.png}" class="card-img-top" alt="...">
+            <!-- Apertura + spalla -->
+            <section class="lead-story" th:if="${featured != null}">
+                <div class="row g-4 g-lg-5">
+                    <div class="col-12 col-lg-8">
+                        <a th:href="@{/articles/detail/{id}(id=${featured.id})}" class="d-block">
+                            <div class="figure-frame wide">
+                                <img th:src="${@ui.cover(featured)}" th:attr="data-fallback=${@ui.generatedCover(featured)}"
+                                    th:alt="${featured.title}">
+                            </div>
+                        </a>
+                        <div class="kicker mt-3">
+                            <a th:if="${featured.category != null}"
+                                th:href="@{/categories/search/{id}(id=${featured.category.id})}"
+                                th:text="${featured.category.name}">Categoria</a>
+                            <span th:unless="${featured.category != null}">In evidenza</span>
+                        </div>
+                        <a th:href="@{/articles/detail/{id}(id=${featured.id})}">
+                            <h1 class="headline" th:text="${featured.title}">Titolo d'apertura</h1>
+                        </a>
+                        <p class="standfirst" th:text="${featured.subtitle}">Sottotitolo</p>
+                        <p class="excerpt" th:text="${@ui.excerpt(featured.body, 260)}">Estratto…</p>
+                        <div class="meta">
+                            di <a th:href="@{/search/{id}(id=${featured.user.id})}" th:text="${featured.user.username}">Autore</a>
+                            <span class="sep">·</span><span th:text="${@ui.date(featured.publishDate)}">data</span>
+                            <span class="sep">·</span><span th:text="${@ui.readingMinutes(featured.body) + ' min di lettura'}">3 min</span>
+                        </div>
+                    </div>
 
-                    <div class="card-body">
-                        <h5 class="card-title" th:text="${article.title}"></h5>
-                        <p class="card-text" th:text="${article.subtitle}"></p>
-                        <p class="card-text" th:text="${article.user.username}"></p>
+                    <aside class="col-12 col-lg-4 column-rule ps-lg-4" th:if="${!secondary.isEmpty()}">
+                        <article class="side-story" th:each="article : ${secondary}">
+                            <div class="kicker" th:text="${article.category != null ? article.category.name : 'Senza categoria'}">Categoria</div>
+                            <a th:href="@{/articles/detail/{id}(id=${article.id})}">
+                                <h3 th:text="${article.title}">Titolo</h3>
+                            </a>
+                            <p th:text="${article.subtitle}">Sottotitolo</p>
+                            <div class="meta">
+                                <span th:text="${article.user.username}">Autore</span><span class="sep">·</span><span
+                                    th:text="${@ui.date(article.publishDate)}">data</span>
+                            </div>
+                        </article>
+                    </aside>
+                </div>
+            </section>
 
-                        <a th:href="@{/articles/detail/{id}(id=${article.id})}" class="btn btn-primary">Leggi</a>
+            <!-- Ultime notizie -->
+            <section th:if="${!latest.isEmpty()}">
+                <h2 class="section-title">Ultime notizie</h2>
+                <div class="row g-4 g-lg-5">
+                    <div class="col-12 col-md-6 col-lg-4" th:each="article : ${latest}">
+                        <a th:replace="~{index :: storyCard(${article})}"></a>
                     </div>
                 </div>
-            </div>
-        </div>
-    </div>
+            </section>
 
-    <head th:insert="~{index :: footer}"></head>
+            <!-- Altre notizie + candidatura -->
+            <section class="row g-4 g-lg-5" th:if="${featured != null}">
+                <div class="col-12 col-lg-8" th:if="${!more.isEmpty()}">
+                    <h2 class="section-title">Da leggere anche</h2>
+                    <ol class="numbered-list">
+                        <li th:each="article : ${more}">
+                            <div>
+                                <div class="kicker" th:text="${article.category != null ? article.category.name : ''}">Categoria</div>
+                                <a th:href="@{/articles/detail/{id}(id=${article.id})}">
+                                    <h4 th:text="${article.title}">Titolo</h4>
+                                </a>
+                                <div class="meta" th:text="${article.user.username + ' · ' + @ui.date(article.publishDate)}">Autore · data</div>
+                            </div>
+                        </li>
+                    </ol>
+                </div>
+                <div class="col-12" th:classappend="${!more.isEmpty()} ? 'col-lg-4' : ''">
+                    <h2 class="section-title">La redazione</h2>
+                    <div class="paper-card">
+                        <div class="kicker mb-2">Lavora con noi</div>
+                        <h3 class="mb-3">Scrivi per l'Aulab Chronicle</h3>
+                        <p class="mb-4">Cerchiamo redattori e revisori. Registrati, invia la candidatura e
+                            l'amministrazione la valuterà.</p>
+                        <a th:href="@{/operations/career/request}" class="btn btn-ink">Invia la candidatura</a>
+                        <a th:href="@{/articles}" class="btn btn-outline-ink ms-1">Sfoglia l'archivio</a>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer th:replace="~{index :: footer}"></footer>
     <script th:replace="~{index :: bootstrapScript}"></script>
 </body>
+
 </html>

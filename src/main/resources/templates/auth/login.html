@@ -1,54 +1,57 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="it" xmlns:th="http://www.thymeleaf.org">
 
-<head th:insert="~{index :: head}"></head>
+<head th:replace="~{index :: head}"></head>
 
 <body>
+    <header th:replace="~{index :: navbar}"></header>
 
-    <head th:insert="~{index :: navbar}"></head>
-
-    <div class="vh-100"></div>
-    <br /><br />
-    <div class="container">
-        <div class="row">
-            <div class="col-md-6 offset-md-3">
-                <div th:if="${param.error}">
-                    <div class="alert alert-danger">Invalid email or password</div>
-                </div>
-                <div th:if="${param.logout}">
-                    <div class="alert alert-success">You have been logged out.</div>
-                </div>
-                <div class="card">
-                    <div class="card-header">
-                        <h2 class="text-center">Login Form</h2>
+    <main>
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-12 col-md-8 col-lg-5">
+                    <div class="page-head border-0 mb-0">
+                        <div class="kicker">Area riservata</div>
+                        <h1>Accedi</h1>
+                        <p>Entra per scrivere, revisionare o gestire la redazione.</p>
                     </div>
-                    <div class="card-body">
-                        <form th:action="@{/login}" class="form-horizontal" role="form" method="post">
-                            <div class="form-group mb-3">
-                                <label class="control-label">Email</label>
-                                <input type="text" id="username" name="username" class="form-control"
-                                    placeholder="enter email address">
+
+                    <div th:if="${param.error}" class="flash error mb-3" role="alert">
+                        <i class="fa-solid fa-triangle-exclamation"></i> Email o password non corretti.
+                    </div>
+                    <div th:if="${param.logout}" class="flash success mb-3" role="status">
+                        <i class="fa-solid fa-check"></i> Sei uscito correttamente.
+                    </div>
+                    <div th:if="${param['session-expired']}" class="flash error mb-3" role="alert">
+                        <i class="fa-solid fa-clock"></i> La sessione è scaduta, accedi di nuovo.
+                    </div>
+
+                    <div class="paper-card mt-3">
+                        <form th:action="@{/login}" method="post">
+                            <div class="mb-3">
+                                <label class="form-label" for="username">Email</label>
+                                <input type="email" id="username" name="username" class="form-control"
+                                    placeholder="nome@esempio.it" autocomplete="username" required autofocus>
                             </div>
-                            <div class="form-group mb-3">
-                                <label class="control-label">Password</label>
+                            <div class="mb-4">
+                                <label class="form-label" for="password">Password</label>
                                 <input type="password" id="password" name="password" class="form-control"
-                                    placeholder="enter password">
+                                    autocomplete="current-password" required>
                             </div>
-                            <div class="form-group mb-3">
-                                <button type="submit" class="btn btn-primary">Submit</button>
-                                <span>Don't have an account? <a th:href="@{/register}">Register here</a></span>
-                            </div>
+                            <button type="submit" class="btn btn-ink w-100">Accedi</button>
                         </form>
                     </div>
+
+                    <p class="meta text-center mt-4">Non hai un account?
+                        <a th:href="@{/register}">Registrati</a>
+                    </p>
                 </div>
             </div>
         </div>
-    </div>
+    </main>
 
-    <head th:insert="~{index :: footer}"></head>
+    <footer th:replace="~{index :: footer}"></footer>
     <script th:replace="~{index :: bootstrapScript}"></script>
-    
-
 </body>
 
 </html>

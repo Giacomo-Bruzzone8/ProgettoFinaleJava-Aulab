@@ -40,7 +40,7 @@ public class CategoryControler {
     public String categorySearch(@PathVariable("id") Long id, Model viewModel) {
         CategoryDto category = categoryService.read(id);
 
-        viewModel.addAttribute("title", "Tutti gli articoli della categoria: " + category.getName());
+        viewModel.addAttribute("title", category.getName());
 
         List<ArticleDto> articles = articleService.searchByCategory(modelMapper.map(category, Category.class));
 
