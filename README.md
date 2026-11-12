@@ -2,6 +2,19 @@
 
 Aulab Chronicle è un giornale online sviluppato con Spring Boot come progetto finale del corso di Specializzazione Java di Aulab. Gli articoli scritti dai redattori vengono pubblicati soltanto dopo l'approvazione di un revisore.
 
+![Pagina di un articolo](docs/screenshots/articolo.png)
+
+<table>
+  <tr>
+    <td width="50%"><img src="docs/screenshots/sezione.png" alt="Archivio di una sezione"></td>
+    <td width="50%"><img src="docs/screenshots/articolo-testo.png" alt="Corpo di un articolo"></td>
+  </tr>
+  <tr>
+    <td align="center"><em>Archivio di una sezione</em></td>
+    <td align="center"><em>Corpo dell'articolo</em></td>
+  </tr>
+</table>
+
 ## Funzionalità principali
 
 - **Lettura pubblica:** prima pagina, archivio, sezioni tematiche, ricerca per parola chiave e pagina di ciascun autore.
